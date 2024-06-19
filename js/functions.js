@@ -31,3 +31,7 @@ const returnOnlyDigitsNumber = (value) => {
   }
   return Number(onlyDigitsString);
 };
+
+checkStringLength();
+checkIfAStringIsAPalindrome();
+returnOnlyDigitsNumber();
