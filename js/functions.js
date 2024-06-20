@@ -27,6 +27,8 @@ export const returnOnlyDigitsNumber = (value) => {
 };
 
 // Функция для создания случайного целого числа из диапазона
-export const createRandomNumber = (firstRangeLimit, secondRangeLimit) => {
-  return firstRangeLimit < secondRangeLimit ?
-}
+export const createRandomNumber = (min, max) => {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
