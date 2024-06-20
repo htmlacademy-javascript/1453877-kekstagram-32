@@ -5,7 +5,6 @@ const checkStringLength = (string, maxLength) => string.length <= maxLength;
 const checkIfAStringIsAPalindrome = (string) => {
   const modifiedString = string.replaceAll(' ', '').toLowerCase();
   for (let currentSymbol = 0; currentSymbol < Math.floor(modifiedString.length / 2); currentSymbol++) {
-    console.log(`${modifiedString[currentSymbol]}, ${modifiedString[modifiedString.length - currentSymbol - 1]}`);
     if (modifiedString[currentSymbol] !== modifiedString[modifiedString.length - currentSymbol - 1]) {
       return false;
     }
