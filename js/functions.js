@@ -3,9 +3,9 @@ export const checkStringLength = (string, maxLength) => string.length <= maxLeng
 
 // Функция для проверки, является ли строка палиндромом. Палиндром — это слово или фраза, которые одинаково читаются и слева направо и справа налево.
 export const checkIfAStringIsAPalindrome = (string) => {
-  const modifiedString = string.replaceAll(' ', '').toLowerCase();
-  for (let currentSymbol = 0; currentSymbol < Math.floor(modifiedString.length / 2); currentSymbol++) {
-    if (modifiedString[currentSymbol] !== modifiedString[modifiedString.length - currentSymbol - 1]) {
+  string = string.replaceAll(' ', '').toLowerCase();
+  for (let currentSymbol = 0; currentSymbol < Math.floor(string.length / 2); currentSymbol++) {
+    if (string[currentSymbol] !== string[string.length - currentSymbol - 1]) {
       return false;
     }
   }
@@ -25,3 +25,8 @@ export const returnOnlyDigitsNumber = (value) => {
   }
   return (onlyDigitsString === '') ? NaN : Number(onlyDigitsString);
 };
+
+// Функция для создания случайного целого числа из диапазона
+export const createRandomNumber = (firstRangeLimit, secondRangeLimit) => {
+  return firstRangeLimit < secondRangeLimit ?
+}
