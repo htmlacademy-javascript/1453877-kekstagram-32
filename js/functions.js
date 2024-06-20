@@ -5,33 +5,28 @@ const checkStringLength = (string, maxLength) => string.length <= maxLength;
 const checkIfAStringIsAPalindrome = (string) => {
   const modifiedString = string.replaceAll(' ', '').toLowerCase();
   for (let currentSymbol = 0; currentSymbol < Math.floor(modifiedString.length / 2); currentSymbol++) {
+    console.log(`${modifiedString[currentSymbol]}, ${modifiedString[modifiedString.length - currentSymbol - 1]}`);
     if (modifiedString[currentSymbol] !== modifiedString[modifiedString.length - currentSymbol - 1]) {
       return false;
     }
-    return true;
   }
+  return true;
 };
 
 // Функция принимает строку, извлекает содержащиеся в ней цифры от 0 до 9 и возвращает их в виде целого положительного числа. Если в строке нет ни одной цифры, функция должна вернуть NaN
 const returnOnlyDigitsNumber = (value) => {
   let stringValue = '';
   let onlyDigitsString = '';
-  if (typeof(value) === 'number') {
-    stringValue = value.toString();
-  } else {
-    stringValue = value;
-  }
+  stringValue = (typeof(value) === 'number') ? stringValue = value.toString() : stringValue = value;
   for (let currentSymbol = 0; currentSymbol < stringValue.length; currentSymbol++) {
     if (!Number.isNaN(parseInt(stringValue[currentSymbol], 10))) {
-      onlyDigitsString = onlyDigitsString + stringValue[currentSymbol];
+      onlyDigitsString += stringValue[currentSymbol];
     }
   }
-  if (onlyDigitsString === '') {
-    return NaN;
-  }
-  return Number(onlyDigitsString);
+  return (onlyDigitsString === '') ? NaN : Number(onlyDigitsString);
 };
 
-checkStringLength();
-checkIfAStringIsAPalindrome();
-returnOnlyDigitsNumber();
+checkStringLength('проверяемая строка', 20);
+checkIfAStringIsAPalindrome('Лёша на полке клопа нашёл ');
+returnOnlyDigitsNumber('1 кефир, 0.5 батона');
+returnOnlyDigitsNumber(-1);
