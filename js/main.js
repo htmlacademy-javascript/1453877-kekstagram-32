@@ -54,4 +54,4 @@ const createArrayOfPhotoCards = (photoCardsAmount, messagesArray, namesArray, de
   }
   return arrayOfPhotoCards;
 };
-console.log(createArrayOfPhotoCards(25, MESSAGES, NAMES, DESCRIPTIONS));
+createArrayOfPhotoCards(25, MESSAGES, NAMES, DESCRIPTIONS);
