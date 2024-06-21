@@ -6,7 +6,7 @@ const createMessage = (messagesArray) => {
   const messagesAmount = createRandomNumber(1, 2);
   for (let currentMessage = 0; currentMessage < messagesAmount; currentMessage++) {
     messageString += messagesArray[createRandomNumber(0, messagesArray.length - 1)];
-    if (currentMessage > 0 && currentMessage !== messagesAmount - 1) {
+    if (currentMessage >= 0 && currentMessage !== messagesAmount - 1) {
       messageString += ' ';
     }
   }
@@ -54,4 +54,4 @@ const createArrayOfPhotoCards = (photoCardsAmount, messagesArray, namesArray, de
   }
   return arrayOfPhotoCards;
 };
-createArrayOfPhotoCards(25, MESSAGES, NAMES, DESCRIPTIONS);
+console.log(createArrayOfPhotoCards(25, MESSAGES, NAMES, DESCRIPTIONS));
