@@ -1,6 +1,3 @@
-//make bigPicture
-//show bigPicture
-
 const makeAndFillComment = (commentContent) => {
   const comment = document.createElement('li');
   comment.classList.add('social__comment');
@@ -32,4 +29,9 @@ export const fillBigPicture = (pictureContent, bigPictureModal) => {
   bigPictureModal.querySelector('.comments-loader').classList.add('hidden');
   bigPictureModal.querySelector('.social__caption').textContent = pictureContent.description;
   fillComments(pictureContent.comments, document.querySelector('.social__comments'));
+};
+
+export const toggleBigPicture = () => {
+  document.querySelector('.big-picture').classList.toggle('hidden');
+  document.body.classList.toggle('modal-open');
 };

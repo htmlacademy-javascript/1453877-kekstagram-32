@@ -48,9 +48,4 @@ export const notTakingPlaceAfterWorkTime = (workDayBeginningTime, workDayEndingT
   return (meetingBeginningTime >= workDayBeginningTime && meetingBeginningTime + meetingDurationInMinutes <= workDayEndingTime);
 };
 
-export const toggleModal = (modal) => {
-  modal.classList.toggle('hidden');
-  document.body.classList.toggle('modal-open');
-};
-
 export const isEscapeKey = (evt) => evt.key === 'Escape';
