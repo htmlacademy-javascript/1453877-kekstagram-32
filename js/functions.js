@@ -47,3 +47,5 @@ export const notTakingPlaceAfterWorkTime = (workDayBeginningTime, workDayEndingT
   meetingBeginningTime = transformTimeStringIntoMinutes(meetingBeginningTime);
   return (meetingBeginningTime >= workDayBeginningTime && meetingBeginningTime + meetingDurationInMinutes <= workDayEndingTime);
 };
+
+export const isEscapeKey = (evt) => evt.key === 'Escape';

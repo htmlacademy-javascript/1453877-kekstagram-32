@@ -1,6 +1,9 @@
-
 import { NAMES, DESCRIPTIONS, MESSAGES } from './mocks.js';
 import { createArrayOfPhotoCards } from './data.js';
-import { makeThumbnails } from './gallery.js';
+import { showThumbnails } from './thumbnails.js';
+import { listenThumbnails } from './gallery.js';
 
-makeThumbnails(createArrayOfPhotoCards(25, MESSAGES, NAMES, DESCRIPTIONS));
+
+const picturesContent = createArrayOfPhotoCards(25, MESSAGES, NAMES, DESCRIPTIONS);
+showThumbnails(picturesContent);
+listenThumbnails(picturesContent);
