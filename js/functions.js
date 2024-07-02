@@ -49,3 +49,11 @@ export const notTakingPlaceAfterWorkTime = (workDayBeginningTime, workDayEndingT
 };
 
 export const isEscapeKey = (evt) => evt.key === 'Escape';
+
+export const returnArrayElementByDataId = (array, dataId) => {
+  for (let currentElement = 0; currentElement < array.length; currentElement++) {
+    if (array[currentElement].id === +dataId) {
+      return array[currentElement];
+    }
+  }
+};
