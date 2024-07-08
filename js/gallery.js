@@ -13,7 +13,7 @@ function onBigPictureEscapeKeydown(evt) {
 
 function onBigPictureCloseOrOutClick(evt) {
   const bigPicture = document.querySelector('.big-picture');
-  if (evt.target.classList.contains('cancel')) { // || (!evt.target.closest('.big-picture__preview'))
+  if (evt.target.classList.contains('cancel') || (!evt.target.closest('.big-picture__preview'))) {
     toggleBigPicture();
     bigPicture.removeEventListener('click', onBigPictureCloseOrOutClick);
     document.removeEventListener('keydown', onBigPictureEscapeKeydown);

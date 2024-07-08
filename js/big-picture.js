@@ -11,11 +11,12 @@ export const recreateLoaderButton = (loaderButton) => {
   loaderButton.replaceWith(newLoaderButton);
 };
 
-const fillImage = (pictureContent, imageBlock) => {
-  imageBlock.querySelector('img').src = pictureContent.url;
+const fillImage = (pictureContent, bigPictureModal) => {
+  bigPictureModal.querySelector('.big-picture__img').querySelector('img').src = pictureContent.url;
 };
 
-const fillSocial = (pictureContent, socialBlock) => {
+const fillSocial = (pictureContent, bigPictureModal) => {
+  const socialBlock = bigPictureModal.querySelector('.social__header');
   socialBlock.querySelector('.likes-count').textContent = pictureContent.likes;
   socialBlock.querySelector('.social__caption').textContent = pictureContent.description;
 };
@@ -57,14 +58,10 @@ const fillComments = (pictureContent, commentsToLoad, commentsBlock) => {
   commentsBlock.appendChild(commentsFragment);
 };
 
-export const fillBigPicture = (pictureContent, commentsToLoad, bigPictureModal) => {
-  const imageBlock = bigPictureModal.querySelector('.big-picture__img');
-  const socialBlock = bigPictureModal.querySelector('.social__header');
+const workWithComments = (pictureContent, commentsToLoad, bigPictureModal) => {
   const commentsCounterBlock = bigPictureModal.querySelector('.social__comment-count');
   const commentsBlock = bigPictureModal.querySelector('.social__comments');
   const commentsLoader = bigPictureModal.querySelector('.comments-loader');
-  fillImage(pictureContent, imageBlock);
-  fillSocial(pictureContent, socialBlock);
   commentsBlock.innerHTML = '';
   fillCommentsCounter(pictureContent, commentsCounterBlock, commentsBlock);
   if (pictureContent.comments.length === 0) {
@@ -81,9 +78,14 @@ export const fillBigPicture = (pictureContent, commentsToLoad, bigPictureModal) 
       fillComments(pictureContent, commentsToLoad, commentsBlock);
       fillCommentsCounter(pictureContent, commentsCounterBlock, commentsBlock);
       if (commentsBlock.querySelectorAll('.social__comment').length === pictureContent.comments.length) {
-        recreateLoaderButton(commentsLoader);
         bigPictureModal.querySelector('.comments-loader').classList.add('hidden');
       }
     });
   }
+};
+
+export const fillBigPicture = (pictureContent, commentsToLoad, bigPictureModal) => {
+  fillImage(pictureContent, bigPictureModal);
+  fillSocial(pictureContent, bigPictureModal);
+  workWithComments(pictureContent, commentsToLoad, bigPictureModal);
 };
