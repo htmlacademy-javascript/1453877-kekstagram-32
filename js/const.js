@@ -10,9 +10,18 @@ export const Comments = {
 };
 
 export const ErrorMessages = {
-  HashtagRestrictionError: `Каждый хэштег должен быть не длиннее ${Hashtags.stringLength} символов и не может включать в себя ничего кроме букв и цифр`,
+  HashtagRestrictionError:
+    `Ограничения на каждый хэштег:
+      <ul style="text-align: left"><li>должен состоять не более чем из ${Hashtags.stringLength} символов;</li>
+      <li>не может включать в себя ничего кроме букв и цифр</li>
+      <li>должен начитаться с символа '#'</li>
+      <li>должен быть отделён от предыдущего хэштега пробелом</li></ul>`,
   HashtagAmountError: `Можно указать не больше ${Hashtags.amount} хэштегов`,
   HashtagDuplicateError: 'Хэштеги не могут повторяться',
   CommentLengthError: `Комментарии должны быть не длиннее ${Comments.stringLength} символов`,
 };
 
+export const Scale = {
+  step: 0.25,
+  defaultValue: '100%'
+};
