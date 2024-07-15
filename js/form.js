@@ -1,34 +1,5 @@
 import { isEscapeKey, compareArrayElementsWithRegEx, findDuplicatesElementsInArray } from './functions.js';
-import { Hashtags, Comments, ErrorMessages, Scale } from './const.js';
-
-const toggleUploadForm = () => {
-  document.querySelector('.img-upload__overlay').classList.toggle('hidden');
-  document.body.classList.toggle('modal-open');
-};
-
-function onUploadFormEscapeKeydown(evt) {
-  const uploadFormBlock = document.getElementById('upload-select-image');
-  const hashtagsInput = uploadFormBlock.querySelector('.text__hashtags');
-  const commentTextarea = uploadFormBlock.querySelector('.text__description');
-  if (isEscapeKey(evt) && !(document.activeElement === hashtagsInput || document.activeElement === commentTextarea)) {
-    toggleUploadForm();
-    document.querySelector('.img-upload__overlay').removeEventListener('click', onUploadFormCloseOrOutClick);
-    document.removeEventListener('keydown', onUploadFormEscapeKeydown);
-    document.querySelector('.img-upload__input').value = '';
-    uploadFormBlock.querySelector('.img-upload__scale').removeEventListener('click', onScaleControlClick);
-  }
-}
-
-function onUploadFormCloseOrOutClick(evt) {
-  const uploadFormBlock = document.querySelector('.img-upload__overlay');
-  if (evt.target.classList.contains('cancel') || (evt.target.classList.contains('img-upload__overlay'))) {
-    toggleUploadForm();
-    uploadFormBlock.removeEventListener('click', onUploadFormCloseOrOutClick);
-    document.removeEventListener('keydown', onUploadFormEscapeKeydown);
-    document.querySelector('.img-upload__input').value = '';
-    uploadFormBlock.querySelector('.img-upload__scale').removeEventListener('click', onScaleControlClick);
-  }
-}
+import { Hashtags, Comments, ErrorMessages, Scale, Effects, DefaultUploadFormValues } from './const.js';
 
 // Валидация хэштегов и комментариев
 const validateHashtagsByAmount = (hashtagsString) => (hashtagsString.trim().split(' ').length <= Hashtags.amount);
@@ -36,34 +7,29 @@ const validateHashtagsByRestrictions = (hashtagsString) => compareArrayElementsW
 const validateHashtagsByDuplication = (hashtagsString) => !findDuplicatesElementsInArray(hashtagsString.trim().split(' '));
 const validateCommentByLength = (commentString) => (commentString.length <= Comments.stringLength);
 
-const listenInputs = (uploadFormBlock) => {
-  const hashtagsInput = uploadFormBlock.querySelector('.text__hashtags');
-  const commentTextarea = uploadFormBlock.querySelector('.text__description');
-  const pristine = new Pristine(uploadFormBlock, {
-    classTo: 'img-upload__field-wrapper',
-    errorClass: 'img-upload__field-wrapper--error',
-    errorTextParent: 'img-upload__field-wrapper',
-    errorTextTag: 'div',
-  });
+const validationConfig = {
+  classTo: 'img-upload__field-wrapper',
+  errorClass: 'img-upload__field-wrapper--error',
+  errorTextParent: 'img-upload__field-wrapper',
+  errorTextTag: 'div',
+};
+
+const listenInputs = (uploadFormModal) => {
+  const hashtagsInput = uploadFormModal.querySelector('.text__hashtags');
+  const commentTextarea = uploadFormModal.querySelector('.text__description');
+  const pristine = new Pristine(uploadFormModal, validationConfig);
   pristine.reset();
   pristine.addValidator(hashtagsInput, validateHashtagsByAmount, ErrorMessages.HashtagAmountError);
   pristine.addValidator(hashtagsInput, validateHashtagsByRestrictions, ErrorMessages.HashtagRestrictionError);
   pristine.addValidator(hashtagsInput, validateHashtagsByDuplication, ErrorMessages.HashtagDuplicateError);
   pristine.addValidator(commentTextarea, validateCommentByLength, ErrorMessages.CommentLengthError);
-  uploadFormBlock.addEventListener('submit', (evt) => {
+  uploadFormModal.addEventListener('submit', (evt) => {
     evt.preventDefault();
     pristine.validate();
   });
 };
 
-// const setScaleValueToImageAndScaleBlock = (uploadFormBlock, value, scaleRestrictions) => {
-//   const scaleBlock = uploadFormBlock.querySelector('.img-upload__scale');
-//   const scaleValue = scaleBlock.querySelector('.scale__control--value');
-//   const image = uploadFormBlock.querySelector('.img-upload__preview img');
-//   scaleValue.value = value + '%';
-
-// }
-
+// Масштабирование изображения
 const countScaleValue = (currentValue, scaleStep) => {
   if ((currentValue + scaleStep) > 100) {
     return 100;
@@ -73,40 +39,137 @@ const countScaleValue = (currentValue, scaleStep) => {
   return currentValue + scaleStep;
 };
 
-function onScaleControlClick(evt) {
-  const uploadFormBlock = document.getElementById('upload-select-image');
-  const scaleBlock = uploadFormBlock.querySelector('.img-upload__scale');
-  const scaleValue = scaleBlock.querySelector('.scale__control--value');
-  const scaleValueLess = scaleBlock.querySelector('.scale__control--smaller');
-  const scaleValueMore = scaleBlock.querySelector('.scale__control--bigger');
-  const image = uploadFormBlock.querySelector('.img-upload__preview img');
-  let newScaleValue;
-  if (evt.target === scaleValueLess) {
-    newScaleValue = countScaleValue(parseInt(scaleValue.value, 10), -Scale.step * 100);
-  } else if (evt.target === scaleValueMore) {
-    newScaleValue = countScaleValue(parseInt(scaleValue.value, 10), Scale.step * 100);
-  }
-  scaleValue.value = `${newScaleValue}%`;
-  image.style.transform = `scale(${newScaleValue / 100}`;
+const setScaleValue = (scaleValueElement, image, scaleValue) => {
+  scaleValueElement.value = `${scaleValue}%`;
+  image.style.transform = `scale(${scaleValue / 100}`;
 };
 
-const listenScaleControls = (uploadFormBlock) => {
-  const scaleBlock = uploadFormBlock.querySelector('.img-upload__scale');
+const onScaleControlClick = (evt) => {
+  const uploadFormModal = document.querySelector('.img-upload__overlay');
+  const scaleBlock = uploadFormModal.querySelector('.img-upload__scale');
+  const scaleValueElement = scaleBlock.querySelector('.scale__control--value');
+  const scaleValueLess = scaleBlock.querySelector('.scale__control--smaller');
+  const scaleValueMore = scaleBlock.querySelector('.scale__control--bigger');
+  if (evt.target === scaleValueLess || evt.target === scaleValueMore) {
+    const image = uploadFormModal.querySelector('.img-upload__preview img');
+    let newScaleValue;
+    if (evt.target === scaleValueLess) {
+      newScaleValue = countScaleValue(parseInt(scaleValueElement.value, 10), -Scale.step * 100);
+    } else if (evt.target === scaleValueMore) {
+      newScaleValue = countScaleValue(parseInt(scaleValueElement.value, 10), Scale.step * 100);
+    }
+    setScaleValue(scaleValueElement, image, newScaleValue);
+  }
+};
+
+const listenScaleControls = (uploadFormModal) => {
+  const scaleBlock = uploadFormModal.querySelector('.img-upload__scale');
   const scaleValue = scaleBlock.querySelector('.scale__control--value');
-  scaleValue.value = Scale.defaultValue;
-  uploadFormBlock.querySelector('.img-upload__preview img').style.transform = `scale(${Scale.defaultValue}`;
+  scaleValue.value = DefaultUploadFormValues.scale;
+  uploadFormModal.querySelector('.img-upload__preview img').style.transform = `scale(${Scale.defaultValue}`;
   scaleBlock.addEventListener('click', onScaleControlClick);
 };
 
+// Работа с эффектами
+const createSlider = (effectParameters, sliderBlock) => {
+  noUiSlider.create(sliderBlock, {
+    start: effectParameters.min,
+    range: {
+      'min': effectParameters.min,
+      'max': effectParameters.max,
+    },
+    step: effectParameters.step,
+  });
+};
+
+const setEffect = (effectParameters, currentValue, image, effectLevelElement) => {
+  image.style.filter = `${effectParameters.filter}(${currentValue}${effectParameters.unit})`;
+  effectLevelElement.setAttribute('value', currentValue);
+};
+
+const clearEffect = (image, effectLevelElement) => {
+  image.style.filter = '';
+  effectLevelElement.setAttribute('value', '');
+};
+
+const onEffectsControlClick = (evt) => {
+  if (evt.target.closest('input.effects__radio')) {
+    const uploadFormModal = document.querySelector('.img-upload__overlay');
+    const effectName = evt.target.closest('input.effects__radio').id;
+    const effectsBlock = uploadFormModal.querySelector('.img-upload__effect-level');
+    const image = uploadFormModal.querySelector('.img-upload__preview img');
+    const effectsSliderBlock = uploadFormModal.querySelector('.img-upload__effect-level');
+    const effectsLevelValue = effectsSliderBlock.querySelector('.effect-level__value');
+    const effectsSlider = effectsSliderBlock.querySelector('.effect-level__slider');
+    effectsSlider.noUiSlider?.destroy();
+    if (effectName !== 'effect-none') {
+      effectsBlock.classList.remove('hidden');
+      createSlider(Effects[effectName], effectsSlider);
+      effectsSlider.noUiSlider.on('update', () => {
+        setEffect(Effects[effectName], effectsSlider.noUiSlider.get(), image, effectsLevelValue);
+      });
+    } else {
+      clearEffect(image, effectsLevelValue);
+      effectsBlock.classList.add('hidden');
+    }
+  }
+};
+
+const toggleModal = (modal) => {
+  modal.classList.toggle('hidden');
+  document.body.classList.toggle('modal-open');
+};
+
+const resetUploadForm = (uploadFormModal) => {
+  const image = uploadFormModal.querySelector('.img-upload__preview img');
+  // image.remove();
+  image.style.filter = '';
+  image.style.transform = '';
+  document.querySelector('.img-upload__input').value = '';
+  uploadFormModal.querySelector('.img-upload__effect-level').classList.add('hidden');
+  uploadFormModal.querySelector('.effect-level__value').value = '';
+  uploadFormModal.querySelector('.text__hashtags').textContent = '';
+  uploadFormModal.querySelector('.text__description').value = '';
+};
+
+const deleteUploadFormEventListeners = (uploadFormModal) => {
+  document.removeEventListener('keydown', onUploadFormEscapeKeydown);
+  uploadFormModal.removeEventListener('click', onUploadFormCloseOrOutClick);
+  uploadFormModal.querySelector('.img-upload__scale').removeEventListener('click', onScaleControlClick);
+  uploadFormModal.querySelector('.effects__list').removeEventListener('click', onEffectsControlClick);
+};
+
+function onUploadFormEscapeKeydown(evt) {
+  const uploadFormModal = document.querySelector('.img-upload__overlay');
+  const hashtagsInput = uploadFormModal.querySelector('.text__hashtags');
+  const commentTextarea = uploadFormModal.querySelector('.text__description');
+  if (isEscapeKey(evt) && !(document.activeElement === hashtagsInput || document.activeElement === commentTextarea)) {
+    toggleModal(uploadFormModal);
+    resetUploadForm(uploadFormModal);
+    deleteUploadFormEventListeners(uploadFormModal);
+  }
+}
+
+function onUploadFormCloseOrOutClick(evt) {
+  const uploadFormModal = document.querySelector('.img-upload__overlay');
+  if (evt.target.classList.contains('cancel') || (evt.target.classList.contains('img-upload__overlay'))) {
+    toggleModal(uploadFormModal);
+    resetUploadForm(uploadFormModal);
+    deleteUploadFormEventListeners(uploadFormModal);
+  }
+}
 
 export const listenUploadForm = () => {
-  const uploadFormBlock = document.querySelector('.img-upload__overlay');
-  const uploadInput = document.getElementById('upload-file');
-  uploadInput.addEventListener('change', () => {
-    toggleUploadForm();
+  const uploadFormModal = document.querySelector('.img-upload__overlay');
+  const uploadInputElement = document.getElementById('upload-file');
+  const effectsList = uploadFormModal.querySelector('.effects__list');
+  uploadInputElement.addEventListener('change', () => {
+    resetUploadForm(uploadFormModal);
+    toggleModal(uploadFormModal);
     document.addEventListener('keydown', onUploadFormEscapeKeydown);
-    uploadFormBlock.addEventListener('click', onUploadFormCloseOrOutClick);
-    listenInputs(uploadFormBlock);
-    listenScaleControls(uploadFormBlock);
+    uploadFormModal.addEventListener('click', onUploadFormCloseOrOutClick);
+    listenInputs(uploadFormModal);
+    listenScaleControls(uploadFormModal);
+    effectsList.addEventListener('click', onEffectsControlClick);
   });
 };
