@@ -1,4 +1,4 @@
-import { isEscapeKey, compareArrayElementsWithRegEx, findDuplicatesElementsInArray } from './functions.js';
+import { isEscapeKey, compareArrayElementsWithRegEx, findDuplicatesElementsInArray, toggleModal } from './functions.js';
 import { Hashtags, Comments, ErrorMessages, Scale, Effects, DefaultUploadFormValues } from './const.js';
 
 // Валидация хэштегов и комментариев
@@ -113,11 +113,6 @@ const onEffectsControlClick = (evt) => {
       effectsBlock.classList.add('hidden');
     }
   }
-};
-
-const toggleModal = (modal) => {
-  modal.classList.toggle('hidden');
-  document.body.classList.toggle('modal-open');
 };
 
 const resetUploadForm = (uploadFormModal) => {

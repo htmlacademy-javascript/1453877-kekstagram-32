@@ -74,3 +74,8 @@ export const findDuplicatesElementsInArray = (array) => {
   }
   return set.size !== array.length;
 };
+
+export const toggleModal = (modal) => {
+  modal.classList.toggle('hidden');
+  document.body.classList.toggle('modal-open');
+};
