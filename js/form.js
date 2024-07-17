@@ -38,7 +38,7 @@ const onScaleControlClick = (evt) => {
 const listenScaleControls = (uploadFormModal) => {
   const scaleBlock = uploadFormModal.querySelector('.img-upload__scale');
   const scaleValueElement = scaleBlock.querySelector('.scale__control--value');
-  const image = uploadFormModal.querySelector('.img-upload__preview img')
+  const image = uploadFormModal.querySelector('.img-upload__preview img');
   setScaleValue(scaleValueElement, image, DefaultUploadFormValues.Scale.defaultValue);
   scaleBlock.addEventListener('click', onScaleControlClick);
 };
