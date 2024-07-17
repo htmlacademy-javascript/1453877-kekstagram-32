@@ -1,47 +1,20 @@
-import { isEscapeKey, compareArrayElementsWithRegEx, findDuplicatesElementsInArray, toggleModal } from './functions.js';
-import { Hashtags, Comments, ErrorMessages, Scale, Effects, DefaultUploadFormValues } from './const.js';
-
-// Валидация хэштегов и комментариев
-const validateHashtagsByAmount = (hashtagsString) => (hashtagsString.trim().split(' ').length <= Hashtags.amount);
-const validateHashtagsByRestrictions = (hashtagsString) => compareArrayElementsWithRegEx(hashtagsString.trim().split(' '), Hashtags.restrictionExpression);
-const validateHashtagsByDuplication = (hashtagsString) => !findDuplicatesElementsInArray(hashtagsString.trim().split(' '));
-const validateCommentByLength = (commentString) => (commentString.length <= Comments.stringLength);
-
-const validationConfig = {
-  classTo: 'img-upload__field-wrapper',
-  errorClass: 'img-upload__field-wrapper--error',
-  errorTextParent: 'img-upload__field-wrapper',
-  errorTextTag: 'div',
-};
-
-const listenInputs = (uploadFormModal) => {
-  const hashtagsInput = uploadFormModal.querySelector('.text__hashtags');
-  const commentTextarea = uploadFormModal.querySelector('.text__description');
-  const pristine = new Pristine(uploadFormModal, validationConfig);
-  pristine.reset();
-  pristine.addValidator(hashtagsInput, validateHashtagsByAmount, ErrorMessages.HashtagAmountError);
-  pristine.addValidator(hashtagsInput, validateHashtagsByRestrictions, ErrorMessages.HashtagRestrictionError);
-  pristine.addValidator(hashtagsInput, validateHashtagsByDuplication, ErrorMessages.HashtagDuplicateError);
-  pristine.addValidator(commentTextarea, validateCommentByLength, ErrorMessages.CommentLengthError);
-  uploadFormModal.addEventListener('submit', (evt) => {
-    evt.preventDefault();
-    pristine.validate();
-  });
-};
+import { isEscapeKey, toggleModal } from './functions.js';
+import { DefaultUploadFormValues } from './const.js';
+import { pristine } from './validation.js';
 
 // Масштабирование изображения
 const countScaleValue = (currentValue, scaleStep) => {
-  if ((currentValue + scaleStep) > 100) {
-    return 100;
-  } else if ((currentValue + scaleStep) < 0) {
-    return 0;
+  if ((currentValue + scaleStep) > DefaultUploadFormValues.Scale.maxValue) {
+    return DefaultUploadFormValues.Scale.maxValue;
+  } else if ((currentValue + scaleStep) < DefaultUploadFormValues.Scale.minValue) {
+    return DefaultUploadFormValues.Scale.minValue;
   }
   return currentValue + scaleStep;
 };
 
 const setScaleValue = (scaleValueElement, image, scaleValue) => {
-  scaleValueElement.value = `${scaleValue}%`;
-  image.style.transform = `scale(${scaleValue / 100}`;
+  scaleValueElement.value = `${scaleValue * 100}%`;
+  image.style.transform = `scale(${scaleValue}`;
 };
 
 const onScaleControlClick = (evt) => {
@@ -54,9 +27,9 @@ const onScaleControlClick = (evt) => {
     const image = uploadFormModal.querySelector('.img-upload__preview img');
     let newScaleValue;
     if (evt.target === scaleValueLess) {
-      newScaleValue = countScaleValue(parseInt(scaleValueElement.value, 10), -Scale.step * 100);
+      newScaleValue = countScaleValue(parseInt(scaleValueElement.value, 10) / 100, -DefaultUploadFormValues.Scale.step);
     } else if (evt.target === scaleValueMore) {
-      newScaleValue = countScaleValue(parseInt(scaleValueElement.value, 10), Scale.step * 100);
+      newScaleValue = countScaleValue(parseInt(scaleValueElement.value, 10) / 100, DefaultUploadFormValues.Scale.step);
     }
     setScaleValue(scaleValueElement, image, newScaleValue);
   }
@@ -64,9 +37,9 @@ const onScaleControlClick = (evt) => {
 
 const listenScaleControls = (uploadFormModal) => {
   const scaleBlock = uploadFormModal.querySelector('.img-upload__scale');
-  const scaleValue = scaleBlock.querySelector('.scale__control--value');
-  scaleValue.value = DefaultUploadFormValues.scale;
-  uploadFormModal.querySelector('.img-upload__preview img').style.transform = `scale(${Scale.defaultValue}`;
+  const scaleValueElement = scaleBlock.querySelector('.scale__control--value');
+  const image = uploadFormModal.querySelector('.img-upload__preview img')
+  setScaleValue(scaleValueElement, image, DefaultUploadFormValues.Scale.defaultValue);
   scaleBlock.addEventListener('click', onScaleControlClick);
 };
 
@@ -95,27 +68,30 @@ const clearEffect = (image, effectLevelElement) => {
 const onEffectsControlClick = (evt) => {
   if (evt.target.closest('input.effects__radio')) {
     const uploadFormModal = document.querySelector('.img-upload__overlay');
-    const effectName = evt.target.closest('input.effects__radio').id;
+    const chosenEffectName = evt.target.closest('input.effects__radio').id;
     const effectsBlock = uploadFormModal.querySelector('.img-upload__effect-level');
     const image = uploadFormModal.querySelector('.img-upload__preview img');
     const effectsSliderBlock = uploadFormModal.querySelector('.img-upload__effect-level');
-    const effectsLevelValue = effectsSliderBlock.querySelector('.effect-level__value');
+    const effectsLevelElement = effectsSliderBlock.querySelector('.effect-level__value');
     const effectsSlider = effectsSliderBlock.querySelector('.effect-level__slider');
     effectsSlider.noUiSlider?.destroy();
-    if (effectName !== 'effect-none') {
+    if (chosenEffectName !== 'effect-none') {
       effectsBlock.classList.remove('hidden');
-      createSlider(Effects[effectName], effectsSlider);
+      const chosenEffectParameters = DefaultUploadFormValues.Effects[chosenEffectName];
+      createSlider(chosenEffectParameters, effectsSlider);
+      effectsSlider.noUiSlider.set(chosenEffectParameters.max);
       effectsSlider.noUiSlider.on('update', () => {
-        setEffect(Effects[effectName], effectsSlider.noUiSlider.get(), image, effectsLevelValue);
+        setEffect(chosenEffectParameters, effectsSlider.noUiSlider.get(), image, effectsLevelElement);
       });
     } else {
-      clearEffect(image, effectsLevelValue);
+      clearEffect(image, effectsLevelElement);
       effectsBlock.classList.add('hidden');
     }
   }
 };
 
 const resetUploadForm = (uploadFormModal) => {
+  document.getElementById('upload-select-image').reset();
   const image = uploadFormModal.querySelector('.img-upload__preview img');
   // image.remove();
   image.style.filter = '';
@@ -123,8 +99,6 @@ const resetUploadForm = (uploadFormModal) => {
   document.querySelector('.img-upload__input').value = '';
   uploadFormModal.querySelector('.img-upload__effect-level').classList.add('hidden');
   uploadFormModal.querySelector('.effect-level__value').value = '';
-  uploadFormModal.querySelector('.text__hashtags').textContent = '';
-  uploadFormModal.querySelector('.text__description').value = '';
 };
 
 const deleteUploadFormEventListeners = (uploadFormModal) => {
@@ -142,6 +116,7 @@ function onUploadFormEscapeKeydown(evt) {
     toggleModal(uploadFormModal);
     resetUploadForm(uploadFormModal);
     deleteUploadFormEventListeners(uploadFormModal);
+    pristine.reset();
   }
 }
 
@@ -151,6 +126,7 @@ function onUploadFormCloseOrOutClick(evt) {
     toggleModal(uploadFormModal);
     resetUploadForm(uploadFormModal);
     deleteUploadFormEventListeners(uploadFormModal);
+    pristine.reset();
   }
 }
 
@@ -163,7 +139,6 @@ export const listenUploadForm = () => {
     toggleModal(uploadFormModal);
     document.addEventListener('keydown', onUploadFormEscapeKeydown);
     uploadFormModal.addEventListener('click', onUploadFormCloseOrOutClick);
-    listenInputs(uploadFormModal);
     listenScaleControls(uploadFormModal);
     effectsList.addEventListener('click', onEffectsControlClick);
   });
