@@ -3,7 +3,7 @@ import { DefaultUploadFormValues, ValidationErrorMessages, ValidationConfig } fr
 
 // Валидация хэштегов и комментариев
 const validateHashtagsByAmount = (hashtagsString) => (hashtagsString.trim().split(' ').length <= DefaultUploadFormValues.Hashtags.maxAmount);
-const validateHashtagsByRestrictions = (hashtagsString) => compareArrayElementsWithRegEx(hashtagsString.trim().split(' '), DefaultUploadFormValues.Hashtags.restrictionExpression);
+const validateHashtagsByRestrictions = (hashtagsString) => compareArrayElementsWithRegEx(hashtagsString.trim().split(' '), DefaultUploadFormValues.Hashtags.restrictionExpression) || hashtagsString === '';
 const validateHashtagsByDuplication = (hashtagsString) => !findDuplicatesElementsInArray(hashtagsString.trim().split(' '));
 const validateCommentByLength = (commentString) => (commentString.length <= DefaultUploadFormValues.Comments.maxLength);
 
@@ -14,12 +14,8 @@ const commentTextarea = uploadFormModal.querySelector('.text__description');
 
 export const pristine = new Pristine(uploadForm, ValidationConfig);
 
-pristine.reset();
 pristine.addValidator(hashtagsInput, validateHashtagsByAmount, ValidationErrorMessages.HashtagAmountError);
 pristine.addValidator(hashtagsInput, validateHashtagsByRestrictions, ValidationErrorMessages.HashtagRestrictionError);
 pristine.addValidator(hashtagsInput, validateHashtagsByDuplication, ValidationErrorMessages.HashtagDuplicateError);
 pristine.addValidator(commentTextarea, validateCommentByLength, ValidationErrorMessages.CommentLengthError);
-uploadFormModal.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-  pristine.validate();
-});
+

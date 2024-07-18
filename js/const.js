@@ -47,8 +47,8 @@ export const ValidationErrorMessages = {
 export const ValidationConfig = {
   classTo: 'img-upload__field-wrapper',
   errorClass: 'img-upload__field-wrapper--error',
-  // successClass: '',
+  successClass: 'has-success',
   errorTextParent: 'img-upload__field-wrapper',
   errorTextTag: 'div',
-  // errorTextClass: '',
+  errorTextClass: 'text-help',
 };
