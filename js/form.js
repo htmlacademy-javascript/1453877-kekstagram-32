@@ -46,7 +46,7 @@ function onUploadFormCloseOrOutClick(evt) {
 
 function onUploadFormSubmit(evt) {
   evt.preventDefault();
-  console.log(pristine.validate());
+  // console.log(pristine.validate());
 }
 
 export const listenUploadForm = () => {
