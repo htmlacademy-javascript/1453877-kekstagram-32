@@ -1,10 +1,10 @@
 import { DefaultUploadFormValues } from './const.js';
 
 const countScaleValue = (currentValue, scaleStep) => {
-  if ((currentValue + scaleStep) > DefaultUploadFormValues.Scale.maxValue) {
-    return DefaultUploadFormValues.Scale.maxValue;
-  } else if ((currentValue + scaleStep) < DefaultUploadFormValues.Scale.minValue) {
-    return DefaultUploadFormValues.Scale.minValue;
+  if ((currentValue + scaleStep) > DefaultUploadFormValues.Scale.MAX_VALUE) {
+    return DefaultUploadFormValues.Scale.MAX_VALUE;
+  } else if ((currentValue + scaleStep) < DefaultUploadFormValues.Scale.MIN_VALUE) {
+    return DefaultUploadFormValues.Scale.MIN_VALUE;
   }
   return currentValue + scaleStep;
 };
@@ -24,9 +24,9 @@ export const onScaleControlClick = (evt) => {
     const image = uploadFormModal.querySelector('.img-upload__preview img');
     let newScaleValue;
     if (evt.target === scaleValueLess) {
-      newScaleValue = countScaleValue(parseInt(scaleValueElement.value, 10) / 100, -DefaultUploadFormValues.Scale.step);
+      newScaleValue = countScaleValue(parseInt(scaleValueElement.value, 10) / 100, -DefaultUploadFormValues.Scale.STEP);
     } else if (evt.target === scaleValueMore) {
-      newScaleValue = countScaleValue(parseInt(scaleValueElement.value, 10) / 100, DefaultUploadFormValues.Scale.step);
+      newScaleValue = countScaleValue(parseInt(scaleValueElement.value, 10) / 100, DefaultUploadFormValues.Scale.STEP);
     }
     setScaleValue(scaleValueElement, image, newScaleValue);
   }
@@ -36,6 +36,6 @@ export const listenScaleControls = (uploadFormModal) => {
   const scaleBlock = uploadFormModal.querySelector('.img-upload__scale');
   const scaleValueElement = scaleBlock.querySelector('.scale__control--value');
   const image = uploadFormModal.querySelector('.img-upload__preview img');
-  setScaleValue(scaleValueElement, image, DefaultUploadFormValues.Scale.defaultValue);
+  setScaleValue(scaleValueElement, image, DefaultUploadFormValues.Scale.DEFAULT_VALUE);
   scaleBlock.addEventListener('click', onScaleControlClick);
 };

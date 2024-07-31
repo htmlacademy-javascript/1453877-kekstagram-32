@@ -1,6 +1,6 @@
 import { isEscapeKey, returnArrayElementByDataId, toggleModal } from './functions.js';
-import { fillBigPicture, toggleBigPicture, recreateLoaderButton } from './big-picture.js';
-import { DefaultGalleryValues } from './const.js';
+import { fillBigPicture, recreateLoaderButton } from './big-picture.js';
+import { DefaultMainValues } from './const.js';
 
 function onBigPictureEscapeKeydown(evt) {
   const bigPictureModal = document.querySelector('.big-picture');
@@ -30,8 +30,8 @@ export const listenThumbnails = (picturesContent) => {
       evt.preventDefault();
       const chosenPicture = evt.target.closest('a.picture');
       const pictureContent = returnArrayElementByDataId(picturesContent, chosenPicture.dataset.id);
-      fillBigPicture(pictureContent, DefaultGalleryValues.maxCommentsPerLoad, bigPictureModal);
-      toggleBigPicture();
+      fillBigPicture(pictureContent, DefaultMainValues.MAX_COMMENTS_PER_LOAD, bigPictureModal);
+      toggleModal(bigPictureModal);
       document.addEventListener('keydown', onBigPictureEscapeKeydown);
       bigPictureModal.addEventListener('click', onBigPictureCloseOrOutClick);
     }

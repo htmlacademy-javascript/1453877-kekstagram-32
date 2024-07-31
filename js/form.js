@@ -1,7 +1,16 @@
 import { isEscapeKey, toggleModal } from './functions.js';
 import { onScaleControlClick, listenScaleControls } from './scale.js';
 import { onEffectsControlClick } from './effects.js';
-import { pristine } from './validation.js';
+import { pristine, showFormSubmitSuccess, showFormSubmitFailure } from './validation.js';
+import { SubmitButtonText } from './const.js';
+import { sendData } from './api.js';
+
+const toggleSubmitButton = () => {
+  const uploadForm = document.getElementById('upload-select-image');
+  const submitButton = uploadForm.querySelector('.img-upload__submit');
+  submitButton.toggleAttribute('disabled');
+  submitButton.textContent = submitButton.textContent === SubmitButtonText.IDLE ? SubmitButtonText.SENDING : SubmitButtonText.IDLE;
+};
 
 const resetUploadForm = (uploadFormModal) => {
   document.getElementById('upload-select-image').reset();
@@ -19,7 +28,19 @@ const deleteUploadFormEventListeners = (uploadFormModal) => {
   uploadFormModal.removeEventListener('click', onUploadFormCloseOrOutClick);
   uploadFormModal.querySelector('.img-upload__scale').removeEventListener('click', onScaleControlClick);
   uploadFormModal.querySelector('.effects__list').removeEventListener('click', onEffectsControlClick);
-  document.getElementById('upload-select-image').removeEventListener('submut', onUploadFormSubmit);
+};
+
+const closeUploadForm = () => {
+  const uploadFormModal = document.querySelector('.img-upload__overlay');
+  toggleModal(uploadFormModal);
+  resetUploadForm(uploadFormModal);
+  deleteUploadFormEventListeners(uploadFormModal);
+  pristine.reset();
+};
+
+const closeUploadFormAndShowSuccessMessage = () => {
+  closeUploadForm();
+  showFormSubmitSuccess();
 };
 
 function onUploadFormEscapeKeydown(evt) {
@@ -27,34 +48,41 @@ function onUploadFormEscapeKeydown(evt) {
   const hashtagsInput = uploadFormModal.querySelector('.text__hashtags');
   const commentTextarea = uploadFormModal.querySelector('.text__description');
   if (isEscapeKey(evt) && !(document.activeElement === hashtagsInput || document.activeElement === commentTextarea)) {
-    toggleModal(uploadFormModal);
-    resetUploadForm(uploadFormModal);
-    deleteUploadFormEventListeners(uploadFormModal);
-    pristine.reset();
+    closeUploadForm();
   }
 }
 
 function onUploadFormCloseOrOutClick(evt) {
-  const uploadFormModal = document.querySelector('.img-upload__overlay');
   if (evt.target.classList.contains('cancel') || (evt.target.classList.contains('img-upload__overlay'))) {
-    toggleModal(uploadFormModal);
-    resetUploadForm(uploadFormModal);
-    deleteUploadFormEventListeners(uploadFormModal);
-    pristine.reset();
+    closeUploadForm();
   }
 }
 
-function onUploadFormSubmit(evt) {
-  evt.preventDefault();
-  // console.log(pristine.validate());
-}
+const setUserFormSubmit = (onSuccess) => {
+  const uploadForm = document.getElementById('upload-select-image');
+  uploadForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    const isValid = pristine.validate();
+    if (isValid) {
+      toggleSubmitButton();
+      sendData(new FormData(evt.target))
+        .then(onSuccess)
+        .catch(
+          (err) => {
+            showFormSubmitFailure(err.message);
+          }
+        )
+        .finally(toggleSubmitButton);
+    }
+  });
+};
 
 export const listenUploadForm = () => {
   const uploadFormModal = document.querySelector('.img-upload__overlay');
-  const uploadForm = document.getElementById('upload-select-image');
   const uploadInputElement = document.getElementById('upload-file');
   const effectsList = uploadFormModal.querySelector('.effects__list');
   resetUploadForm(uploadFormModal);
+  setUserFormSubmit(closeUploadFormAndShowSuccessMessage);
   uploadInputElement.addEventListener('change', () => {
     pristine.reset();
     toggleModal(uploadFormModal);
@@ -62,6 +90,5 @@ export const listenUploadForm = () => {
     uploadFormModal.addEventListener('click', onUploadFormCloseOrOutClick);
     listenScaleControls(uploadFormModal);
     effectsList.addEventListener('click', onEffectsControlClick);
-    uploadForm.addEventListener('submit', onUploadFormSubmit);
   });
 };
