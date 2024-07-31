@@ -1,8 +1,3 @@
-export const toggleBigPicture = () => {
-  document.querySelector('.big-picture').classList.toggle('hidden');
-  document.body.classList.toggle('modal-open');
-};
-
 export const recreateLoaderButton = (loaderButton) => {
   const newLoaderButton = document.createElement('button');
   newLoaderButton.classList.add('social__comments-loader');
