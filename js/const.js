@@ -13,6 +13,8 @@ export const DefaultMainValues = {
   PICTURES_TO_LOAD: 25,
   ALERT_SHOW_TIME: 5000,
   MAX_COMMENTS_PER_LOAD: 5,
+  RANDOM_PICTURES: 10,
+  DEBOUNCE_TIMEOUT: 500,
 };
 
 export const DefaultUploadFormValues = {
