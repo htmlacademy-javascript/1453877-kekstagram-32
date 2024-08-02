@@ -2,7 +2,7 @@ import { isEscapeKey, toggleModal } from './functions.js';
 import { onScaleControlClick, listenScaleControls } from './scale.js';
 import { onEffectsControlClick } from './effects.js';
 import { pristine, showFormSubmitSuccess, showFormSubmitFailure } from './validation.js';
-import { SubmitButtonText } from './const.js';
+import { DefaultUploadFormValues, SubmitButtonText } from './const.js';
 import { sendData } from './api.js';
 
 const toggleSubmitButton = () => {
@@ -81,14 +81,21 @@ export const listenUploadForm = () => {
   const uploadFormModal = document.querySelector('.img-upload__overlay');
   const uploadInputElement = document.getElementById('upload-file');
   const effectsList = uploadFormModal.querySelector('.effects__list');
+  const image = uploadFormModal.querySelector('.img-upload__preview img');
   resetUploadForm(uploadFormModal);
   setUserFormSubmit(closeUploadFormAndShowSuccessMessage);
   uploadInputElement.addEventListener('change', () => {
     pristine.reset();
-    toggleModal(uploadFormModal);
-    document.addEventListener('keydown', onUploadFormEscapeKeydown);
-    uploadFormModal.addEventListener('click', onUploadFormCloseOrOutClick);
-    listenScaleControls(uploadFormModal);
-    effectsList.addEventListener('click', onEffectsControlClick);
+    const file = uploadInputElement.files[0];
+    const fileName = file.name.toLowerCase();
+    const matches = DefaultUploadFormValues.FileTypes.some((type) => fileName.endsWith(type));
+    if (matches) {
+      image.src = URL.createObjectURL(file);
+      toggleModal(uploadFormModal);
+      document.addEventListener('keydown', onUploadFormEscapeKeydown);
+      uploadFormModal.addEventListener('click', onUploadFormCloseOrOutClick);
+      listenScaleControls(uploadFormModal);
+      effectsList.addEventListener('click', onEffectsControlClick);
+    }
   });
 };
