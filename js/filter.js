@@ -29,7 +29,7 @@ const filterPicturesDiscussed = (picturesContent) => {
 
 const showThumbnailsWithDelay = debounce((picturesContent) => {
   showThumbnails(picturesContent);
-});
+}, DefaultMainValues.DEBOUNCE_TIMEOUT);
 
 export const listenFiltersBlock = (picturesContent) => {
   const filtersBlock = document.querySelector('.img-filters');
