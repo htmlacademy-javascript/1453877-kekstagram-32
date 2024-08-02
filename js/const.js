@@ -38,7 +38,8 @@ export const DefaultUploadFormValues = {
   },
   Comments: {
     MAX_LENGTH: 140,
-  }
+  },
+  FileTypes: ['jpg', 'jpeg', 'png'],
 };
 
 export const ErrorMessages = {
