@@ -8,6 +8,12 @@ export const returnArrayElementByDataId = (array, dataId) => {
   }
 };
 
+export const getRandomNumber = (rangeStart, rangeEnd) => {
+  rangeStart = Math.ceil(rangeStart);
+  rangeEnd = Math.floor(rangeEnd);
+  return Math.floor(Math.random() * (rangeEnd - rangeStart + 1)) + rangeStart;
+};
+
 export const compareArrayElementsWithRegEx = (array, regexp) => {
   for (let currentElement = 0; currentElement < array.length; currentElement++) {
     if (!array[currentElement].match(regexp)) {
@@ -25,7 +31,34 @@ export const findDuplicatesElementsInArray = (array) => {
   return set.size !== array.length;
 };
 
+export const returnUniqueRandomNumber = (rangeStart, rangeEnd, usedNumbers) => {
+  let randomNumber;
+  do {
+    randomNumber = getRandomNumber(rangeStart, rangeEnd);
+  } while (usedNumbers.has(randomNumber));
+  return randomNumber;
+};
+
 export const toggleModal = (modal) => {
   modal.classList.toggle('hidden');
   document.body.classList.toggle('modal-open');
+};
+
+export const debounce = (callback, timeoutDelay = 500) => {
+  let timeoutId;
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+};
+
+export const throttle = (callback, delayBetweenFrames) => {
+  let lastTime = 0;
+  return (...rest) => {
+    const now = new Date();
+    if (now - lastTime >= delayBetweenFrames) {
+      callback.apply(this, rest);
+      lastTime = now;
+    }
+  };
 };

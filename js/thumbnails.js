@@ -7,7 +7,7 @@ const fillThumbnail = (pictureContent, thumbnail) => {
   return thumbnail;
 };
 
-const showThumbnails = (picturesContent) => {
+export const showThumbnails = (picturesContent) => {
   const thumbnailTemplate = document.querySelector('#picture').content;
   const picturesBlock = document.querySelector('.pictures');
   const thumbnailsFragment = document.createDocumentFragment();
@@ -18,4 +18,8 @@ const showThumbnails = (picturesContent) => {
   picturesBlock.appendChild(thumbnailsFragment);
 };
 
-export { showThumbnails };
+export const deleteThumbnails = () => {
+  const thumbnails = document.querySelectorAll('a.picture');
+  thumbnails.forEach((picture) => picture.remove());
+};
+
