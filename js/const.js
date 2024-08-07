@@ -1,7 +1,7 @@
 export const UrlRoutes = {
   BASE: 'https://32.javascript.htmlacademy.pro/kekstagram',
   GET_DATA: '/data',
-  SEND_DATA: '',
+  SEND_DATA: '/',
 };
 
 export const Method = {
