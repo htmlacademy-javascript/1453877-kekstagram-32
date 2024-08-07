@@ -77,20 +77,37 @@ const setUserFormSubmit = (onSuccess) => {
   });
 };
 
+const fileTypeCheck = (fileName, allowedFileTypes) => allowedFileTypes.some((type) => fileName.endsWith(type));
+
+const setUploadedImageAsPreview = (imageFileUrl, imageElement) => {
+  imageElement.src = imageFileUrl;
+};
+
+const setUploadedImageAsEffectThumbnails = (imageFileUrl, effectThumbnailElements) => {
+  effectThumbnailElements.forEach((effectThumbnail) => {
+    effectThumbnail.style.backgroundImage = `url(${imageFileUrl})`;
+  });
+};
+
+const setUploadedImage = (imageFileUrl, uploadFormModal) => {
+  const imagePreview = uploadFormModal.querySelector('.img-upload__preview img');
+  const effectThumbnails = uploadFormModal.querySelectorAll('.effects__preview');
+  setUploadedImageAsPreview(imageFileUrl, imagePreview);
+  setUploadedImageAsEffectThumbnails(imageFileUrl, effectThumbnails);
+};
+
 export const listenUploadForm = () => {
   const uploadFormModal = document.querySelector('.img-upload__overlay');
   const uploadInputElement = document.getElementById('upload-file');
   const effectsList = uploadFormModal.querySelector('.effects__list');
-  const image = uploadFormModal.querySelector('.img-upload__preview img');
   resetUploadForm(uploadFormModal);
   setUserFormSubmit(closeUploadFormAndShowSuccessMessage);
   uploadInputElement.addEventListener('change', () => {
     pristine.reset();
-    const file = uploadInputElement.files[0];
-    const fileName = file.name.toLowerCase();
-    const matches = DefaultUploadFormValues.FileTypes.some((type) => fileName.endsWith(type));
-    if (matches) {
-      image.src = URL.createObjectURL(file);
+    const imageFile = uploadInputElement.files[0];
+    const imageFileName = imageFile.name.toLowerCase();
+    if (fileTypeCheck(imageFileName, DefaultUploadFormValues.FileTypes)) {
+      setUploadedImage(URL.createObjectURL(imageFile), uploadFormModal);
       toggleModal(uploadFormModal);
       document.addEventListener('keydown', onUploadFormEscapeKeydown);
       uploadFormModal.addEventListener('click', onUploadFormCloseOrOutClick);

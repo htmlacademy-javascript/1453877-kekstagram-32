@@ -27,7 +27,8 @@ const filterPicturesDiscussed = (picturesContent) => {
   return picturesContentSortedDiscussed;
 };
 
-const showThumbnailsWithDelay = debounce((picturesContent) => {
+const deleteOldandShowNewThumbnailsWithDelay = debounce((picturesContent) => {
+  deleteThumbnails();
   showThumbnails(picturesContent);
 }, DefaultMainValues.DEBOUNCE_TIMEOUT);
 
@@ -39,13 +40,12 @@ export const listenFiltersBlock = (picturesContent) => {
     if (!evt.target.classList.contains('img-filters__button--active') || evt.target.id === 'filter-random') {
       clearFilterButtonsStatus(filterButtons);
       setFilterButtonActive(evt.target);
-      deleteThumbnails();
       if (evt.target.id === 'filter-default') {
-        showThumbnailsWithDelay(picturesContent);
+        deleteOldandShowNewThumbnailsWithDelay(picturesContent);
       } else if (evt.target.id === 'filter-random') {
-        showThumbnailsWithDelay(filterPicturesRandom(picturesContent));
+        deleteOldandShowNewThumbnailsWithDelay(filterPicturesRandom(picturesContent));
       } else if (evt.target.id === 'filter-discussed') {
-        showThumbnailsWithDelay(filterPicturesDiscussed(picturesContent));
+        deleteOldandShowNewThumbnailsWithDelay(filterPicturesDiscussed(picturesContent));
       }
     }
   });

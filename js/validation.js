@@ -2,9 +2,11 @@ import { compareArrayElementsWithRegEx, findDuplicatesElementsInArray } from './
 import { DefaultUploadFormValues, ErrorMessages, ValidationConfig, DefaultMainValues } from './const.js';
 
 // Валидация хэштегов и комментариев
-const validateHashtagsByAmount = (hashtagsString) => (hashtagsString.trim().split(' ').length <= DefaultUploadFormValues.Hashtags.MAX_AMOUNT);
-const validateHashtagsByRestrictions = (hashtagsString) => compareArrayElementsWithRegEx(hashtagsString.trim().split(' '), DefaultUploadFormValues.Hashtags.RESTRICTION_EXPRESSION) || hashtagsString === '';
-const validateHashtagsByDuplication = (hashtagsString) => !findDuplicatesElementsInArray(hashtagsString.trim().split(' '));
+const transformHashtagsStringToArray = (hashtagsString) => (hashtagsString.replace(/\s\s+/g, ' ').trim().split(' '));
+
+const validateHashtagsByAmount = (hashtagsString) => (transformHashtagsStringToArray(hashtagsString).length <= DefaultUploadFormValues.Hashtags.MAX_AMOUNT);
+const validateHashtagsByRestrictions = (hashtagsString) => compareArrayElementsWithRegEx(transformHashtagsStringToArray(hashtagsString), DefaultUploadFormValues.Hashtags.RESTRICTION_EXPRESSION) || hashtagsString === '';
+const validateHashtagsByDuplication = (hashtagsString) => !findDuplicatesElementsInArray(transformHashtagsStringToArray(hashtagsString));
 const validateCommentByLength = (commentString) => (commentString.length <= DefaultUploadFormValues.Comments.MAX_LENGTH);
 
 const uploadFormModal = document.querySelector('.img-upload__overlay');
@@ -13,6 +15,7 @@ const hashtagsInput = uploadFormModal.querySelector('.text__hashtags');
 const commentTextarea = uploadFormModal.querySelector('.text__description');
 
 export const pristine = new Pristine(uploadForm, ValidationConfig);
+
 
 pristine.addValidator(hashtagsInput, validateHashtagsByAmount, ErrorMessages.HASHTAG_AMOUNT_ERROR);
 pristine.addValidator(hashtagsInput, validateHashtagsByRestrictions, ErrorMessages.HASHTAG_RESTRICTION_ERROR);
@@ -50,7 +53,6 @@ export const showFormSubmitSuccess = () => {
       alertModal.remove();
     }
   });
-  removeAlertModalAfterTime(alertModal, DefaultMainValues.ALERT_SHOW_TIME);
 };
 
 export const showFormSubmitFailure = () => {
@@ -62,5 +64,4 @@ export const showFormSubmitFailure = () => {
       alertModal.remove();
     }
   });
-  removeAlertModalAfterTime(alertModal, DefaultMainValues.ALERT_SHOW_TIME);
 };
