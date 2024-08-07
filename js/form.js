@@ -47,7 +47,7 @@ function onUploadFormEscapeKeydown(evt) {
   const uploadFormModal = document.querySelector('.img-upload__overlay');
   const hashtagsInput = uploadFormModal.querySelector('.text__hashtags');
   const commentTextarea = uploadFormModal.querySelector('.text__description');
-  if (isEscapeKey(evt) && !(document.activeElement === hashtagsInput || document.activeElement === commentTextarea)) {
+  if (isEscapeKey(evt) && (document.activeElement !== hashtagsInput || document.activeElement !== commentTextarea) && (!document.body.querySelector('section.error'))) {
     closeUploadForm();
   }
 }

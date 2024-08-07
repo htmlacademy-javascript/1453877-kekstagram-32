@@ -1,4 +1,4 @@
-import { compareArrayElementsWithRegEx, findDuplicatesElementsInArray } from './functions.js';
+import { compareArrayElementsWithRegEx, findDuplicatesElementsInArray, isEscapeKey } from './functions.js';
 import { DefaultUploadFormValues, ErrorMessages, ValidationConfig, DefaultMainValues } from './const.js';
 
 // Валидация хэштегов и комментариев
@@ -44,12 +44,25 @@ export const showDataErrorAlert = () => {
   removeAlertModalAfterTime(alertModal, DefaultMainValues.ALERT_SHOW_TIME);
 };
 
+function onAlertEscapeKeydown (evt) {
+  if (isEscapeKey(evt)) {
+    document.body.querySelector('.success')?.remove();
+    document.body.querySelector('.error')?.remove();
+    document.removeEventListener('keydown', onAlertEscapeKeydown);
+  }
+}
+
 export const showFormSubmitSuccess = () => {
   showAlertModal(document.getElementById('success').content);
   const alertModal = document.body.querySelector('.success');
   const alertModalButton = alertModal.querySelector('.success__button');
   alertModal.addEventListener('click', (evt) => {
     if ((evt.target === alertModalButton) || (!evt.target.closest('.success__inner'))) {
+      alertModal.remove();
+    }
+  });
+  document.addEventListener('keydown', (evt) => {
+    if (isEscapeKey(evt)) {
       alertModal.remove();
     }
   });
@@ -64,4 +77,5 @@ export const showFormSubmitFailure = () => {
       alertModal.remove();
     }
   });
+  document.addEventListener('keydown', onAlertEscapeKeydown);
 };
