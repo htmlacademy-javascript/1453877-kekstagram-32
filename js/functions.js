@@ -1,9 +1,9 @@
 export const isEscapeKey = (evt) => evt.key === 'Escape';
 
-export const returnArrayElementByDataId = (array, dataId) => {
-  for (let currentElement = 0; currentElement < array.length; currentElement++) {
-    if (array[currentElement].id === +dataId) {
-      return array[currentElement];
+export const returnArrayElementByDataId = (arrayOfPictures, dataId) => {
+  for (let currentElement = 0; currentElement < arrayOfPictures.length; currentElement++) {
+    if (arrayOfPictures[currentElement].id === +dataId) {
+      return arrayOfPictures[currentElement];
     }
   }
 };
@@ -14,21 +14,21 @@ export const getRandomNumber = (rangeStart, rangeEnd) => {
   return Math.floor(Math.random() * (rangeEnd - rangeStart + 1)) + rangeStart;
 };
 
-export const compareArrayElementsWithRegEx = (array, regexp) => {
-  for (let currentElement = 0; currentElement < array.length; currentElement++) {
-    if (!array[currentElement].match(regexp)) {
+export const compareArrayElementsWithRegEx = (arrayOfHashtags, regexp) => {
+  for (let currentElement = 0; currentElement < arrayOfHashtags.length; currentElement++) {
+    if (!arrayOfHashtags[currentElement].match(regexp)) {
       return false;
     }
   }
   return true;
 };
 
-export const findDuplicatesElementsInArray = (array) => {
+export const findDuplicatesElementsInArray = (arrayOfHashtags) => {
   const set = new Set();
-  for (let currentElement = 0; currentElement < array.length; currentElement++) {
-    set.add(array[currentElement].toLowerCase());
+  for (let currentElement = 0; currentElement < arrayOfHashtags.length; currentElement++) {
+    set.add(arrayOfHashtags[currentElement].toLowerCase());
   }
-  return set.size !== array.length;
+  return set.size !== arrayOfHashtags.length;
 };
 
 export const returnUniqueRandomNumber = (rangeStart, rangeEnd, usedNumbers) => {

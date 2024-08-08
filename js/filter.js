@@ -23,7 +23,7 @@ const filterPicturesRandom = (picturesContent) => {
 
 const filterPicturesDiscussed = (picturesContent) => {
   const picturesContentSortedDiscussed = Array.from(picturesContent);
-  picturesContentSortedDiscussed.sort((a, b) => a.comments.length < b.comments.length ? 1 : -1);
+  picturesContentSortedDiscussed.sort((currentPictureContent, nextPictureContent) => currentPictureContent.comments.length < nextPictureContent.comments.length ? 1 : -1);
   return picturesContentSortedDiscussed;
 };
 

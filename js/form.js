@@ -15,7 +15,6 @@ const toggleSubmitButton = () => {
 const resetUploadForm = (uploadFormModal) => {
   document.getElementById('upload-select-image').reset();
   const image = uploadFormModal.querySelector('.img-upload__preview img');
-  // image.remove();
   image.style.filter = '';
   image.style.transform = '';
   document.querySelector('.img-upload__input').value = '';
